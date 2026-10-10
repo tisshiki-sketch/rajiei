@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#c62828">
+  <title>Practical Usage</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Roboto", "Noto Sans JP", sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+    }
+    .card {
+      background: #ffffff;
+      max-width: 440px;
+      width: 100%;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .header-tag {
+      background-color: #c62828;
+      color: #fff;
+      font-weight: 700;
+      text-align: center;
+      padding: 6px;
+      border-radius: 20px;
+      letter-spacing: 1.5px;
+      font-size: 13px;
+    }
+    .sub-title {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: #444;
+      margin: 8px 0 16px;
+    }
+    .prompt-box {
+      background-color: #fdf2ea;
+      border: 1px solid #f6d2c4;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #1a1a1a;
+    }
+    .situation {
+      color: #8d4b38;
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    button {
+      flex: 1;
+      padding: 12px 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-toggle {
+      background-color: #1976d2;
+      color: white;
+    }
+    .btn-next {
+      background-color: #37474f;
+      color: white;
+    }
+    .hidden {
+      display: none;
+    }
+    .badge {
+      display: inline-block;
+      background: #212121;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-bottom: 6px;
+    }
+    .answer-text {
+      font-size: 15px;
+      font-weight: 700;
+      color: #111;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .explanation-text {
+      font-size: 13px;
+      color: #333;
+      line-height: 1.65;
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 4px solid #c62828;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header-tag">PRACTICAL USAGE</div>
+  <div class="sub-title">表現を実践で使ってみよう</div>
+
+  <div class="prompt-box">
+    <div class="situation" id="situation"></div>
+    <div id="japanese-text"></div>
+  </div>
+
+  <div class="btn-group">
+    <button class="btn-toggle" onclick="toggleAnswer()" id="toggle-btn">解答・解説を見る</button>
+    <button class="btn-next" onclick="nextQuestion()">次の問題</button>
+  </div>
+
+  <div id="answer-area" class="hidden">
+    <div><span class="badge">解答例</span></div>
+    <div class="answer-text" id="english-text"></div>
+
+    <div><span class="badge">解説</span></div>
+    <div class="explanation-text" id="explanation-text"></div>
+  </div>
+</div>
+
+<script>
+  const questions = [
+    {
+      situation: "会社で新人に指導しています",
+      ja: "仕事用の携帯電話は常に携帯しておくこと。顧客からの電話に出られない場合は、5分以内に折り返し連絡しなければなりません。例外はありません。",
+      en: "You are to carry your work phone at all times. If you miss a call from a client, you must call them back within five minutes. No exceptions.",
+      exp: "You are to ~ の感情を交えない無機質な指示ができたなら、まさしく英語上級者です。at all times は「いつも・常に」。client は「顧客」。call ~ back は「〜に折り返し電話をかける」。them は a client を受けています。単数ですが性別が不明なため them で受けます。No exceptions. は非常に強い「例外はありません・認めません」という指示です。"
+    },
+    {
+      situation: "連絡をせず待ち合わせに遅れた恋人に",
+      ja: "遅れそうなら、私に電話してほしい。もう少し私の時間も尊重してほしいんだ。そうしてくれる？",
+      en: "If you're going to be late, I expect you to call me. I need you to respect my time a little more. Can you do that?",
+      exp: "be going to のイメージは「流れの中」。「遅刻しそう」という状況ですね。expect you to ~ は、「あなたが当然〜するものと期待する」ということ。need you to respect ~ では、冷静に必要性を説いています。どちらも「〜してほしい」と訳せますが、繊細に使い分けられています。"
+    },
+    {
+      situation: "パートナーの外出に気がついて",
+      ja: "出かけるの？ ゴミも出してくれる？ ネットの下にちゃんと置いてね、わかった？ ありがとう！",
+      en: "Are you heading out? Take the garbage out, too, will you? Make sure to put it under the net, OK? Thank you!",
+      exp: "head out は「出かける・出発する」。カジュアルなフレーズです。次の文で「, will you?」を使うことができれば OK。家族の間でも、素の命令文は強すぎることが多いのです。take ~ out は「〜を外に持っていく」。Make sure to ~ は「必ず〜して」という頻出フレーズです。"
+    },
+    {
+      situation: "同僚に「スピーチの準備はどんな感じ？ 聞かせてみて」と言われて",
+      ja: "もちろん、いいよ。まだ作成途中のものだということは頭に入れておいてね、いい？ あなたなら何を変えるか教えてね。",
+      en: "Sure, yeah. Keep in mind that it's a work in progress, OK? Let me know what you would change.",
+      exp: "Sure, yeah. は「もちろん、いいよ」。軽い返事を重ねている感じです。Keep in mind ができれば OK。a work in progress は「進行中の仕事（未完成であること）」を表す頻用句です。what you would change の would には、「あなたなら〜でしょう」という仮定条件が織り込まれています。"
+    }
+  ];
+
+  let currentIndex = 0;
+
+  function renderQuestion() {
+    const q = questions[currentIndex];
+    document.getElementById("situation").textContent = `[ ${q.situation} ]`;
+    document.getElementById("japanese-text").textContent = q.ja;
+    document.getElementById("english-text").textContent = q.en;
+    document.getElementById("explanation-text").textContent = q.exp;
+
+    document.getElementById("answer-area").classList.add("hidden");
+    document.getElementById("toggle-btn").textContent = "解答・解説を見る";
+  }
+
+  function toggleAnswer() {
+    const area = document.getElementById("answer-area");
+    const btn = document.getElementById("toggle-btn");
+    if (area.classList.contains("hidden")) {
+      area.classList.remove("hidden");
+      btn.textContent = "解答・解説を隠す";
+    } else {
+      area.classList.add("hidden");
+      btn.textContent = "解答・解説を見る";
+    }
+  }
+
+  function nextQuestion() {
+    currentIndex = (currentIndex + 1) % questions.length;
+    renderQuestion();
+  }
+
+  renderQuestion();
+</script>
+</body>
+</html>
