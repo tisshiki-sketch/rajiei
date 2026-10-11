@@ -41,14 +41,29 @@
       font-size: 14px;
       font-weight: 600;
       color: #444;
-      margin: 8px 0 16px;
+      margin: 8px 0 14px;
+    }
+    /* レッスン選択プルダウン */
+    .select-container {
+      margin-bottom: 14px;
+    }
+    .lesson-select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #cfd8dc;
+      background-color: #f8fafc;
+      font-size: 14px;
+      font-weight: 600;
+      color: #263238;
+      outline: none;
     }
     .prompt-box {
       background-color: #fdf2ea;
       border: 1px solid #f6d2c4;
       border-radius: 12px;
       padding: 16px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       font-size: 15px;
       line-height: 1.6;
       color: #1a1a1a;
@@ -59,13 +74,17 @@
       font-weight: bold;
       margin-bottom: 8px;
     }
-    .btn-group {
+    /* ボタンエリア */
+    .btn-toggle-container {
+      margin-bottom: 10px;
+    }
+    .nav-btn-group {
       display: flex;
       gap: 10px;
       margin-bottom: 20px;
     }
     button {
-      flex: 1;
+      width: 100%;
       padding: 12px 14px;
       border: none;
       border-radius: 10px;
@@ -77,7 +96,7 @@
       background-color: #1976d2;
       color: white;
     }
-    .btn-next {
+    .btn-nav {
       background-color: #37474f;
       color: white;
     }
@@ -118,16 +137,31 @@
   <div class="header-tag">PRACTICAL USAGE</div>
   <div class="sub-title">表現を実践で使ってみよう</div>
 
+  <!-- レッスン選択プルダウン -->
+  <div class="select-container">
+    <select id="lesson-selector" class="lesson-select" onchange="onSelectChange(this.value)">
+      <!-- JavaScriptで自動生成されます -->
+    </select>
+  </div>
+
+  <!-- 問題表示エリア -->
   <div class="prompt-box">
     <div class="situation" id="situation"></div>
     <div id="japanese-text"></div>
   </div>
 
-  <div class="btn-group">
+  <!-- 解答・解説表示ボタン -->
+  <div class="btn-toggle-container">
     <button class="btn-toggle" onclick="toggleAnswer()" id="toggle-btn">解答・解説を見る</button>
-    <button class="btn-next" onclick="nextQuestion()">次の問題</button>
   </div>
 
+  <!-- 前へ / 次へ ボタン -->
+  <div class="nav-btn-group">
+    <button class="btn-nav" onclick="prevQuestion()">前の問題</button>
+    <button class="btn-nav" onclick="nextQuestion()">次の問題</button>
+  </div>
+
+  <!-- 解答・解説エリア -->
   <div id="answer-area" class="hidden">
     <div><span class="badge">解答例</span></div>
     <div class="answer-text" id="english-text"></div>
@@ -138,26 +172,31 @@
 </div>
 
 <script>
+  // lesson プロパティを追加しています
   const questions = [
     {
-      situation: "会社で新人に指導しています",
-      ja: "仕事用の携帯電話は常に携帯しておくこと。顧客からの電話に出られない場合は、5分以内に折り返し連絡しなければなりません。例外はありません。",
-      en: "You are to carry your work phone at all times. If you miss a call from a client, you must call them back within five minutes. No exceptions.",
-      exp: "You are to ~ の感情を交えない無機質な指示ができたなら、まさしく英語上級者です。at all times は「いつも・常に」。client は「顧客」。call ~ back は「〜に折り返し電話をかける」。them は a client を受けています。単数ですが性別が不明なため them で受けます。No exceptions. は非常に強い「例外はありません・認めません」という指示です。"
-    },
-    {
-      situation: "連絡をせず待ち合わせに遅れた恋人に",
-      ja: "遅れそうなら、私に電話してほしい。もう少し私の時間も尊重してほしいんだ。そうしてくれる？",
-      en: "If you're going to be late, I expect you to call me. I need you to respect my time a little more. Can you do that?",
-      exp: "be going to のイメージは「流れの中」。「遅刻しそう」という状況ですね。expect you to ~ は、「あなたが当然〜するものと期待する」ということ。need you to respect ~ では、冷静に必要性を説いています。どちらも「〜してほしい」と訳せますが、繊細に使い分けられています。"
-    },
-    {
+      lesson: "L121",
       situation: "パートナーの外出に気がついて",
       ja: "出かけるの？ ゴミも出してくれる？ ネットの下にちゃんと置いてね、わかった？ ありがとう！",
       en: "Are you heading out? Take the garbage out, too, will you? Make sure to put it under the net, OK? Thank you!",
       exp: "head out は「出かける・出発する」。カジュアルなフレーズです。次の文で「, will you?」を使うことができれば OK。家族の間でも、素の命令文は強すぎることが多いのです。take ~ out は「〜を外に持っていく」。Make sure to ~ は「必ず〜して」という頻出フレーズです。"
     },
     {
+      lesson: "L122",
+      situation: "会社で新人に指導しています",
+      ja: "仕事用の携帯電話は常に携帯しておくこと。顧客からの電話に出られない場合は、5分以内に折り返し連絡しなければなりません。例外はありません。",
+      en: "You are to carry your work phone at all times. If you miss a call from a client, you must call them back within five minutes. No exceptions.",
+      exp: "You are to ~ の感情を交えない無機質な指示ができたなら、まさしく英語上級者です。at all times は「いつも・常に」。client は「顧客」。call ~ back は「〜に折り返し電話をかける」。them は a client を受けています。単数ですが性別が不明なため them で受けます。No exceptions. は非常に強い「例外はありません・認めません」という指示です。"
+    },
+    {
+      lesson: "L123",
+      situation: "連絡をせず待ち合わせに遅れた恋人に",
+      ja: "遅れそうなら、私に電話してほしい。もう少し私の時間も尊重してほしいんだ。そうしてくれる？",
+      en: "If you're going to be late, I expect you to call me. I need you to respect my time a little more. Can you do that?",
+      exp: "be going to のイメージは「流れの中」。「遅刻しそう」という状況ですね。expect you to ~ は、「あなたが当然〜するものと期待する」ということ。need you to respect ~ では、冷静に必要性を説いています。どちらも「〜してほしい」と訳せますが、繊細に使い分けられています。"
+    },
+    {
+      lesson: "L124",
       situation: "同僚に「スピーチの準備はどんな感じ？ 聞かせてみて」と言われて",
       ja: "もちろん、いいよ。まだ作成途中のものだということは頭に入れておいてね、いい？ あなたなら何を変えるか教えてね。",
       en: "Sure, yeah. Keep in mind that it's a work in progress, OK? Let me know what you would change.",
@@ -167,13 +206,29 @@
 
   let currentIndex = 0;
 
+  // プルダウンの選択肢を初期化
+  function initSelector() {
+    const selector = document.getElementById("lesson-selector");
+    selector.innerHTML = "";
+    questions.forEach((q, index) => {
+      const option = document.createElement("option");
+      option.value = index;
+      option.textContent = `${q.lesson} - ${q.situation}`;
+      selector.appendChild(option);
+    });
+  }
+
   function renderQuestion() {
     const q = questions[currentIndex];
-    document.getElementById("situation").textContent = `[ ${q.situation} ]`;
+    document.getElementById("situation").textContent = `[ ${q.lesson} ${q.situation} ]`;
     document.getElementById("japanese-text").textContent = q.ja;
     document.getElementById("english-text").textContent = q.en;
     document.getElementById("explanation-text").textContent = q.exp;
 
+    // プルダウンの選択位置を同期
+    document.getElementById("lesson-selector").value = currentIndex;
+
+    // 解答を隠す
     document.getElementById("answer-area").classList.add("hidden");
     document.getElementById("toggle-btn").textContent = "解答・解説を見る";
   }
@@ -195,6 +250,18 @@
     renderQuestion();
   }
 
+  function prevQuestion() {
+    currentIndex = (currentIndex - 1 + questions.length) % questions.length;
+    renderQuestion();
+  }
+
+  function onSelectChange(value) {
+    currentIndex = parseInt(value, 10);
+    renderQuestion();
+  }
+
+  // 初期化実行
+  initSelector();
   renderQuestion();
 </script>
 </body>
